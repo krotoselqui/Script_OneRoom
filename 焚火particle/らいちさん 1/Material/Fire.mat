@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Fire
+  m_Shader: {fileID: 4800000, guid: af088638df1d0b44badd0c35517f622b, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Mask_XY:
+        m_Texture: {fileID: 2800000, guid: 7eed95f304fb5384082230b0508030cc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise_005:
+        m_Texture: {fileID: 2800000, guid: a60efa2748975344ea98d58afd0b196d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TEX_Mask:
+        m_Texture: {fileID: 2800000, guid: ab0c9b1a92275334790e0e0cf2d25802, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TEX_Mask_Distortion:
+        m_Texture: {fileID: 2800000, guid: ab0c9b1a92275334790e0e0cf2d25802, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TEX_Mask_XY:
+        m_Texture: {fileID: 2800000, guid: 7eed95f304fb5384082230b0508030cc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TEX_distortion:
+        m_Texture: {fileID: 2800000, guid: 89c92b679d8779f46bcfd2d589dd1db6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TEX_main:
+        m_Texture: {fileID: 2800000, guid: a60efa2748975344ea98d58afd0b196d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _cloud_RGB:
+        m_Texture: {fileID: 2800000, guid: 89c92b679d8779f46bcfd2d589dd1db6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _gradation_003:
+        m_Texture: {fileID: 2800000, guid: ab0c9b1a92275334790e0e0cf2d25802, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Emission: 10
+    - _Float0: 0.3
+    - _Gradation_weight: 4
+    - _Opacity: 1
+    - __dirty: 0
+    - _gradation: 0.3
+    m_Colors:
+    - _Color0: {r: 1, g: 0.35801265, b: 0.1273585, a: 0}
+    - _Color1: {r: 1, g: 0.72918606, b: 0.3443396, a: 0}
