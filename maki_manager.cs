@@ -14,26 +14,33 @@ public class maki_manager : UdonSharpBehaviour
     [Header("火元")]
     [SerializeField] private Transform fireTransform;
 
+    private VRC_Pickup vrcPick = null;
+
     void Start()
     {
         //pickupコンポーネントを取得
-        pickup = (VRC_Pickup)this.GetComponent(typeof(VRC_Pickup));
+        vrcPick = (VRC_Pickup)this.GetComponent(typeof(VRC_Pickup));
     }
 
     //privateでもよさそう？
     public void Update()
     {
-        if (pickup) pickup.pickupable = true;
+        if (vrcPick) vrcPick.pickupable = true;
     }
 
     public override void OnDrop()
     {
-        if (!pickup) pickup = (VRC_Pickup)this.GetComponent(typeof(VRC_Pickup));
-        if (pickup)  pickup.PlayHaptics();
+        if (!vrcPick) vrcPick = (VRC_Pickup)this.GetComponent(typeof(VRC_Pickup));
+        if (vrcPick)  vrcPick.PlayHaptics();
         
         //audio.PlayOneShot(burnSounds[Random.Range(0, burnSounds.Length)]);
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(BurnFireWood));
      
+    }
+
+    public void BurnFireWood()
+    {
+
     }
 
 
