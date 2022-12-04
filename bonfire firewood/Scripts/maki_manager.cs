@@ -33,6 +33,7 @@ public class maki_manager : UdonSharpBehaviour
 
     private float currentTime = 0f;
     private bool isBurning = false;
+    private int himoto_pos = 0;
 
 
     void Start()
@@ -95,7 +96,11 @@ public class maki_manager : UdonSharpBehaviour
             for(int i = 0; i < firePosition.Length; i++)
             {
                 dist_himoto = Vector3.Distance(this.gameObject.transform.position, firePosition[i]);
-                if (min_dist_himoto > dist_himoto) min_dist_himoto = dist_himoto;
+                if (min_dist_himoto > dist_himoto)
+                {
+                    min_dist_himoto = dist_himoto;
+                    himoto_pos = i;
+                }
             }
         }
 
@@ -119,7 +124,7 @@ public class maki_manager : UdonSharpBehaviour
             if (!audio.isPlaying)
             {
                 if (burnSounds.Length <= 0) break;
-                audio.transform.position = fireTransform.position;
+                audio.transform.position = fireTransform[himoto_pos].position;
                 audio.PlayOneShot(burnSounds[Random.Range(0, burnSounds.Length)]);
 
                 break;
