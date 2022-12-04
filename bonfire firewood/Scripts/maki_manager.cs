@@ -14,8 +14,8 @@ public class maki_manager : UdonSharpBehaviour
     [SerializeField] private AudioSource[] auSrc;
 
     [Header("火元")]
-    [SerializeField] private Transform fireTransform;
-    private Vector3 firePosition;
+    [SerializeField] private Transform[] fireTransform;
+    private Vector3[] firePosition;
 
     [Header("火元判定距離")]
     [SerializeField] float distJudge = 0.4f;
@@ -41,9 +41,15 @@ public class maki_manager : UdonSharpBehaviour
         vrcPick = (VRC_Pickup)this.GetComponent(typeof(VRC_Pickup));
         initPosition = this.gameObject.transform.position;
         initRot = this.gameObject.transform.rotation;
+
+       
         if (fireTransform != null)
         {
-            firePosition = fireTransform.position;
+            firePosition = new Vector3[fireTransform.Length];
+            for (int i = 0; i < fireTransform.Length; i++)
+            {
+                firePosition[i] = fireTransform[i].position;
+            }
         }
 
         isBurning = false;
@@ -82,13 +88,18 @@ public class maki_manager : UdonSharpBehaviour
         if (vrcPick) vrcPick.PlayHaptics();
 
         float dist_himoto = float.MaxValue;
+        float min_dist_himoto = float.MaxValue;
 
         if (fireTransform != null)
         {
-            dist_himoto = Vector3.Distance(this.gameObject.transform.position, firePosition);
+            for(int i = 0; i < firePosition.Length; i++)
+            {
+                dist_himoto = Vector3.Distance(this.gameObject.transform.position, firePosition[i]);
+                if (min_dist_himoto > dist_himoto) min_dist_himoto = dist_himoto;
+            }
         }
 
-        if (dist_himoto < distJudge)
+        if (min_dist_himoto < distJudge)
         {
             currentTime = respawnTime;
             isBurning = true;
@@ -97,9 +108,6 @@ public class maki_manager : UdonSharpBehaviour
             //audio.PlayOneShot(burnSounds[Random.Range(0, burnSounds.Length)]);
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(BurnFireWood));
         }
-
-
-
 
     }
 
