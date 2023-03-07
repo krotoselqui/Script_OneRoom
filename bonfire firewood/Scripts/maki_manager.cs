@@ -7,43 +7,44 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
 public class maki_manager : UdonSharpBehaviour
 {
-    [Header("音声系統(なくても動く)")]
-    [Header("手放したときに再生する音(この中でランダム)")]
+    [Header("燃える音(この中で1つランダム)")]
     [SerializeField] private AudioClip[] burnSounds;
+
     [Header("音の発生源")]
-    [SerializeField] private AudioSource[] auSrc;
+    [SerializeField] private AudioSource audioSrc;
 
     [Header("火元")]
     [SerializeField] private Transform[] fireTransform;
     private Vector3[] firePosition;
 
-    [Header("火元判定距離")]
-    [SerializeField] float distJudge = 0.4f;
+    [Header("火元判定距離(m)")]
+    [SerializeField] float distBurnThreshold = 0.4f;
 
-    [Header("薪燃焼エフェクト (world依存に設定して下さい)")]
+    [Header("薪燃焼エフェクト(すべて再生)")]
     [SerializeField] private ParticleSystem[] burnParticle;
 
-    private VRC_Pickup vrcPick = null;
+    [FieldChangeCallback(nameof(vrcPick))]
+    private VRC_Pickup _vrcPick;
+    private VRC_Pickup vrcPick => _vrcPick ? _vrcPick : (_vrcPick = (VRC_Pickup)GetComponent(typeof(VRC_Pickup)));
 
-    private Vector3 initPosition = new Vector3(0, 0, 0);
-    private Quaternion initRot = new Quaternion(0, 0, 0, 0);
+    private Vector3 initPos;
+    private Quaternion initRot;
 
-    [Header("薪を手放してからリスポーンするまでの時間")]
+    [Header("燃え始めの瞬間～リスポーンまでの時間(sec)")]
     [SerializeField] private float respawnTime = 2.0f;
 
     private float currentTime = 0f;
     private bool isBurning = false;
-    private int himoto_pos = 0;
+    private int fireIndex = 0;
 
-
-    void Start()
+    public void Start()
     {
-        //pickupコンポーネントを取得
-        vrcPick = (VRC_Pickup)this.GetComponent(typeof(VRC_Pickup));
-        initPosition = this.gameObject.transform.position;
+        vrcPick.InteractionText = "FireWood";
+        vrcPick.DisallowTheft = true;
+
+        initPos = this.gameObject.transform.position;
         initRot = this.gameObject.transform.rotation;
 
-       
         if (fireTransform != null)
         {
             firePosition = new Vector3[fireTransform.Length];
@@ -56,21 +57,17 @@ public class maki_manager : UdonSharpBehaviour
         isBurning = false;
     }
 
-    //privateでもよさそう？
     public void Update()
     {
         if (isBurning)
         {
-            if (vrcPick) vrcPick.pickupable = false;
+            DisablePickUp();
             if (currentTime < 0)
             {
-                if (vrcPick) vrcPick.pickupable = true;
+                EnablePickUp();
                 isBurning = false;
                 if (Networking.IsOwner(Networking.LocalPlayer, this.gameObject))
-                {
-                    this.transform.position = initPosition;
-                    this.transform.rotation = initRot;
-                }
+                    this.transform.SetPositionAndRotation(initPos,initRot);
             }
             else
             {
@@ -79,67 +76,52 @@ public class maki_manager : UdonSharpBehaviour
         }
         else
         {
-            if (vrcPick) vrcPick.pickupable = true;
+            EnablePickUp();
         }
     }
 
     public override void OnDrop()
     {
-        if (!vrcPick) vrcPick = (VRC_Pickup)this.GetComponent(typeof(VRC_Pickup));
-        if (vrcPick) vrcPick.PlayHaptics();
+        PlayHaptics();
 
-        float dist_himoto = float.MaxValue;
-        float min_dist_himoto = float.MaxValue;
-
+        float min_dist = float.MaxValue;
         if (fireTransform != null)
         {
             for(int i = 0; i < firePosition.Length; i++)
             {
-                dist_himoto = Vector3.Distance(this.gameObject.transform.position, firePosition[i]);
-                if (min_dist_himoto > dist_himoto)
+                float dist = Vector3.Distance(this.gameObject.transform.position, firePosition[i]);
+                if (min_dist > dist)
                 {
-                    min_dist_himoto = dist_himoto;
-                    himoto_pos = i;
+                    min_dist = dist;
+                    fireIndex = i;
                 }
             }
         }
-
-        if (min_dist_himoto < distJudge)
+        
+        if (min_dist < distBurnThreshold)
         {
             currentTime = respawnTime;
             isBurning = true;
-            if (vrcPick) vrcPick.pickupable = false;
+            DisablePickUp();
 
-            //audio.PlayOneShot(burnSounds[Random.Range(0, burnSounds.Length)]);
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(BurnFireWood));
         }
-
     }
 
     public void BurnFireWood()
     {
-        foreach (AudioSource audio in auSrc)
+        //Sounds            
+        if (audioSrc && !audioSrc.isPlaying)
         {
-            if (!audio) continue;
-            if (!audio.isPlaying)
-            {
-                if (burnSounds.Length <= 0) break;
-                audio.transform.position = fireTransform[himoto_pos].position;
-                audio.PlayOneShot(burnSounds[Random.Range(0, burnSounds.Length)]);
-
-                break;
-            }
+            audioSrc.transform.position = fireTransform[fireIndex].position;
+            audioSrc.PlayOneShot(burnSounds[Random.Range(0, burnSounds.Length)]);
         }
-
-        foreach (ParticleSystem burn_pt in burnParticle)
-        {
-            if (burn_pt != null)
-            {
-                burn_pt.Play();
-            }
-        }
-
+        
+        //Particles
+        foreach (ParticleSystem burn_pt in burnParticle) if (burn_pt != null) burn_pt.Play();
     }
 
-
+    private void DisablePickUp() => vrcPick.pickupable = false;
+    private void EnablePickUp() => vrcPick.pickupable = true;
+    private void PlayHaptics() => vrcPick.PlayHaptics();
 }
