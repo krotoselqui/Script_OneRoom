@@ -9,7 +9,7 @@
 
 #### 作成目的
 - ワールド『ぽかぽかの冬』において、薪をくべられる体験の再現
-- 参考:![image](/Image/ref_maki.png) 
+- 参考:![簡易仕様書](Image/ref_maki.png) 
 
 #### 定義
 - 薪 : 当スクリプトを、UdonBehaviourとしてAsset経由でアタッチしたGameObject.
