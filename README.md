@@ -34,3 +34,19 @@
 #### 想定される設定ミス/今後発生しうる問題点
 - `distBurnThreshold`の設定値を過大に設定し、意図しない距離で燃える
 - `VRCPickUp`の挙動に変更が加わる.
+
+#### 流用可能スニペット
+```csharp
+    //VRCPICKUP
+    [FieldChangeCallback(nameof(vrcPick))]
+    private VRC_Pickup _vrcPick;
+    private VRC_Pickup vrcPick => _vrcPick ? _vrcPick : (_vrcPick = (VRC_Pickup)GetComponent(typeof(VRC_Pickup)));
+
+    //DETACHABLE WITH VRCPICKUP DECLARES
+    private void DisablePickUp() => vrcPick.pickupable = false;
+    private void EnablePickUp() => vrcPick.pickupable = true;
+    private void PlayHaptics() => vrcPick.PlayHaptics();
+    private void SetTextPickup(string st) => vrcPick.InteractionText = st;
+    private void SetTheftablePickup(bool b) => vrcPick.DisallowTheft = b;
+```
+
