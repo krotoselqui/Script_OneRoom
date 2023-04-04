@@ -113,6 +113,8 @@ namespace Mofuryu
         //DETACHABLE WITH VRCPICKUP DECLARES
         private void DisablePickUp() => vrcPick.pickupable = false;
         private void EnablePickUp() => vrcPick.pickupable = true;
+        private void SwitchPickUp() => vrcPick.pickupable = !vrcPick.pickupable;
+        private void SwitchPickUp(bool b) => vrcPick.pickupable = b;
         private void PlayHaptics() => vrcPick.PlayHaptics();
         private void SetTextPickup(string st) => vrcPick.InteractionText = st;
         private void SetTheftablePickup(bool b) => vrcPick.DisallowTheft = b;
