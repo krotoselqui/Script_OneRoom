@@ -48,10 +48,17 @@ namespace Mofuryu
             initPos = this.gameObject.transform.position;
             initRot = this.gameObject.transform.rotation;
 
-            firePosition = new Vector3[fireTransform?.Length ?? 0];
-
-            for(int i = 0; i < fireTransform?.Length ?? 0; i++){
-                firePosition[i] = fireTransform[i].position;
+            if (fireTransform != null)
+            {
+                firePosition = new Vector3[fireTransform.Length];
+                for (int i = 0; i < fireTransform.Length; i++)
+                {
+                    firePosition[i] = fireTransform[i].position;
+                }
+            }
+            else
+            {
+                firePosition = new Vector3[0];
             }
 
             isBurning = false;
